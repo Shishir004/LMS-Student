@@ -19,6 +19,7 @@ import {
   useUpdateUserMutation,
 } from "@/features/api/authApi";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const [name, setName] = useState("");
@@ -27,28 +28,8 @@ const Profile = () => {
   const { data, isLoading, refetch } = useLoadUserQuery();
   const [
     updateUser,
-    {
-      data: updateUserData,
-      isLoading: updateUserIsLoading,
-      isError,
-      error,
-      isSuccess,
-    },
+    { data: updateUserData, isLoading: updateUserIsLoading, isError, error, isSuccess },
   ] = useUpdateUserMutation();
-
-  console.log(data);
-
-  const onChangeHandler = (e) => {
-    const file = e.target.files?.[0];
-    if (file) setProfilePhoto(file);
-  };
-
-  const updateUserHandler = async () => {
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("profilePhoto", profilePhoto);
-    await updateUser(formData);
-  };
 
   useEffect(() => {
     refetch();
@@ -64,54 +45,45 @@ const Profile = () => {
     }
   }, [error, updateUserData, isSuccess, isError]);
 
-  if (isLoading) return <h1>Profile Loading...</h1>;
+  const onChangeHandler = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setProfilePhoto(file);
+  };
 
-  const user = data && data.user;
+  const updateUserHandler = async () => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("profilePhoto", profilePhoto);
+    await updateUser(formData);
+  };
 
-  console.log(user);
-  
+  if (isLoading) return <h1 className="text-center text-lg">Loading profile...</h1>;
+
+  const user = data?.user;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 my-10">
-      <h1 className="font-bold text-2xl text-center md:text-left">PROFILE</h1>
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-8 my-5">
+    <motion.div
+      className="max-w-5xl mx-auto px-4 py-10"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <h1 className="text-3xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+        Your Profile
+      </h1>
+
+      <div className="bg-white dark:bg-gray-900 shadow-md rounded-2xl p-6 flex flex-col md:flex-row gap-6">
         <div className="flex flex-col items-center">
-          <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
+          <Avatar className="h-28 w-28 md:h-36 md:w-36 ring-4 ring-indigo-500">
             <AvatarImage
               src={user?.photoUrl || "https://github.com/shadcn.png"}
-              alt="@shadcn"
+              alt="User Avatar"
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>U</AvatarFallback>
           </Avatar>
-        </div>
-        <div>
-          <div className="mb-2">
-            <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
-              Name:
-              <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user.name}
-              </span>
-            </h1>
-          </div>
-          <div className="mb-2">
-            <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
-              Email:
-              <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user.email}
-              </span>
-            </h1>
-          </div>
-          <div className="mb-2">
-            <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
-              Role:
-              <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user.role.toUpperCase()}
-              </span>
-            </h1>
-          </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm" className="mt-2">
+              <Button size="sm" className="mt-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white">
                 Edit Profile
               </Button>
             </DialogTrigger>
@@ -119,8 +91,7 @@ const Profile = () => {
               <DialogHeader>
                 <DialogTitle>Edit Profile</DialogTitle>
                 <DialogDescription>
-                  Make changes to your profile here. Click save when you're
-                  done.
+                  Make changes to your profile. Click save when you're done.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -148,11 +119,12 @@ const Profile = () => {
                 <Button
                   disabled={updateUserIsLoading}
                   onClick={updateUserHandler}
+                  className="bg-gradient-to-r from-purple-600 to-pink-500 text-white"
                 >
                   {updateUserIsLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
-                      wait
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
                     </>
                   ) : (
                     "Save Changes"
@@ -162,20 +134,36 @@ const Profile = () => {
             </DialogContent>
           </Dialog>
         </div>
+
+        <div className="flex-1 space-y-2 text-gray-800 dark:text-gray-100">
+          <p>
+            <strong>Name:</strong>{" "}
+            <span className="text-gray-600 dark:text-gray-300">{user.name}</span>
+          </p>
+          <p>
+            <strong>Email:</strong>{" "}
+            <span className="text-gray-600 dark:text-gray-300">{user.email}</span>
+          </p>
+          <p>
+            <strong>Role:</strong>{" "}
+            <span className="text-indigo-600 font-semibold">{user.role?.toUpperCase()}</span>
+          </p>
+        </div>
       </div>
-      <div>
-        <h1 className="font-medium text-lg">Courses you're enrolled in</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
-          {user.enrolledCourses.length === 0 ? (
-            <h1>You haven't enrolled yet</h1>
+
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold mb-4">Courses You're Enrolled In</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {user.enrolledCourses?.length === 0 ? (
+            <p className="text-center text-gray-600">You haven't enrolled in any courses yet.</p>
           ) : (
             user.enrolledCourses.map((course) => (
-              <Course course={course} key={course._id} />
+              <Course key={course._id} course={course} />
             ))
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

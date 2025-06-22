@@ -6,7 +6,7 @@ import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 export const register = async (req,res) => {
     try {
        
-        const {name, email, password} = req.body; // patel214
+        const {name, email, password} = req.body;
         if(!name || !email || !password){
             return res.status(400).json({
                 success:false,
@@ -124,7 +124,6 @@ export const updateProfile = async (req, res) => {
     let photoUrl = user.photoUrl;
 
     if (profilePhoto) {
-      // Delete old image from Cloudinary if exists
       if (user.photoUrl) {
         const publicId = user.photoUrl.split("/").pop().split(".")[0];
         await deleteMediaFromCloudinary(publicId);
