@@ -10,14 +10,11 @@ import purchaseRoute from "./routes/purchaseCourse.route.js";
 import courseProgressRoute from "./routes/courseProgress.route.js";
 
 dotenv.config({});
-
-// call database connection here
 connectDB();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// default middleware
 app.use(express.json());
 app.use(cookieParser());
 

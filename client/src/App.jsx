@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Login from "./pages/Login";
 import HeroSection from "./pages/student/HeroSection";
@@ -16,6 +16,7 @@ import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourseDetail from "./pages/student/CourseDetail";
 import CourseProgress from "./pages/student/CourseProgress";
 import SearchPage from "./pages/student/SearchPage";
+
 import {
   AdminRoute,
   AuthenticatedUser,
@@ -24,115 +25,101 @@ import {
 import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 import { ThemeProvider } from "./components/ThemeProvider";
 
-const appRouter = createBrowserRouter([
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      {
-        path: "/",
-        element: (
-          <>
-            <HeroSection />
-            <Courses />
-          </>
-        ),
-      },
-      {
-        path: "login",
-        element: (
-          <AuthenticatedUser>
-            <Login />
-          </AuthenticatedUser>
-        ),
-      },
-      {
-        path: "my-learning",
-        element: (
-          <ProtectedRoute>
-            <MyLearning />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "profile",
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "course/search",
-        element: (
-          <ProtectedRoute>
-            <SearchPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "course-detail/:courseId",
-        element: (
-          <ProtectedRoute>
-            <CourseDetail />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "course-progress/:courseId",
-        element: (
-          <ProtectedRoute>
-            <PurchaseCourseProtectedRoute>
-            <CourseProgress />
-            </PurchaseCourseProtectedRoute>
-          </ProtectedRoute>
-        ),
-      },
-
-      // admin routes start from here
-      {
-        path: "admin",
-        element: (
-          <AdminRoute>
-            <Sidebar />
-          </AdminRoute>
-        ),
-        children: [
-          {
-            path: "dashboard",
-            element: <Dashboard />,
-          },
-          {
-            path: "course",
-            element: <CourseTable />,
-          },
-          {
-            path: "course/create",
-            element: <AddCourse />,
-          },
-          {
-            path: "course/:courseId",
-            element: <EditCourse />,
-          },
-          {
-            path: "course/:courseId/lecture",
-            element: <CreateLecture />,
-          },
-          {
-            path: "course/:courseId/lecture/:lectureId",
-            element: <EditLecture />,
-          },
-        ],
-      },
-    ],
-  },
-]);
-
 function App() {
   return (
     <main>
       <ThemeProvider>
-      <RouterProvider router={appRouter} />
+        <Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route element={<MainLayout />}>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <HeroSection />
+                    <Courses />
+                  </>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <AuthenticatedUser>
+                    <Login />
+                  </AuthenticatedUser>
+                }
+              />
+
+              {/* Protected Student Routes */}
+              <Route
+                path="/my-learning"
+                element={
+                  <ProtectedRoute>
+                    <MyLearning />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/course/search"
+                element={
+                  <ProtectedRoute>
+                    <SearchPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/course-detail/:courseId"
+                element={
+                  <ProtectedRoute>
+                    <CourseDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/course-progress/:courseId"
+                element={
+                  <ProtectedRoute>
+                    <PurchaseCourseProtectedRoute>
+                      <CourseProgress />
+                    </PurchaseCourseProtectedRoute>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <Sidebar />
+                  </AdminRoute>
+                }
+              >
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="course" element={<CourseTable />} />
+                <Route path="course/create" element={<AddCourse />} />
+                <Route path="course/:courseId" element={<EditCourse />} />
+                <Route
+                  path="course/:courseId/lecture"
+                  element={<CreateLecture />}
+                />
+                <Route
+                  path="course/:courseId/lecture/:lectureId"
+                  element={<EditLecture />}
+                />
+              </Route>
+            </Route>
+          </Routes>
+        </Router>
       </ThemeProvider>
     </main>
   );
