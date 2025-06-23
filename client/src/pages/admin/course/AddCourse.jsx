@@ -30,33 +30,38 @@ const AddCourse = () => {
   };
 
   const createCourseHandler = async () => {
+    if (!courseTitle || !category) {
+      toast.error("Please fill all required fields");
+      return;
+    }
     await createCourse({ courseTitle, category });
   };
 
-  // for displaying toast
-  useEffect(()=>{
-    if(isSuccess){
-        toast.success(data?.message || "Course created.");
-        navigate("/admin/course");
+  // Toast on success
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "Course created.");
+      navigate("/admin/course");
     }
-  },[isSuccess, error])
+  }, [isSuccess, error]);
 
   return (
     <div className="flex-1 mx-10">
       <div className="mb-4">
         <h1 className="font-bold text-xl">
-          Lets add course, add some basic course details for your new course
+          Let's add a course — basic course details first
         </h1>
-        <p className="text-sm">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Possimus,
-          laborum!
+        <p className="text-sm text-muted-foreground">
+          Add a title and category to get started.
         </p>
       </div>
       <div className="space-y-4">
         <div>
-          <Label>Title</Label>
+          <Label htmlFor="courseTitle">Title</Label>
           <Input
+            id="courseTitle"
             type="text"
+            required
             value={courseTitle}
             onChange={(e) => setCourseTitle(e.target.value)}
             placeholder="Your Course Name"
@@ -64,29 +69,29 @@ const AddCourse = () => {
         </div>
         <div>
           <Label>Category</Label>
-          <Select onValueChange={getSelectedCategory}>
-            <SelectTrigger className="w-[180px]">
+          <Select required onValueChange={getSelectedCategory}>
+            <SelectTrigger className="w-[250px]">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Category</SelectLabel>
-                <SelectItem value="Next JS">Next JS</SelectItem>
-                <SelectItem value="Data Science">Data Science</SelectItem>
-                <SelectItem value="Frontend Development">
-                  Frontend Development
-                </SelectItem>
-                <SelectItem value="Fullstack Development">
-                  Fullstack Development
-                </SelectItem>
-                <SelectItem value="MERN Stack Development">
-                  MERN Stack Development
-                </SelectItem>
-                <SelectItem value="Javascript">Javascript</SelectItem>
-                <SelectItem value="Python">Python</SelectItem>
-                <SelectItem value="Docker">Docker</SelectItem>
-                <SelectItem value="MongoDB">MongoDB</SelectItem>
-                <SelectItem value="HTML">HTML</SelectItem>
+                {[
+                  "Next JS",
+                  "Data Science",
+                  "Frontend Development",
+                  "Fullstack Development",
+                  "MERN Stack Development",
+                  "Javascript",
+                  "Python",
+                  "Docker",
+                  "MongoDB",
+                  "HTML",
+                ].map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>

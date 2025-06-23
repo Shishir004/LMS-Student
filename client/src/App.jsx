@@ -25,10 +25,21 @@ import {
 import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 import { ThemeProvider } from "./components/ThemeProvider";
 
+// ✅ Add these imports
+import { useLoadUserQuery } from "./features/api/authApi";
+import { useSelector } from "react-redux";
+
 function App() {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // ✅ Only call API if not already authenticated
+  useLoadUserQuery(undefined, {
+    skip: isAuthenticated,
+  });
+
   return (
     <main>
-      <ThemeProvider>
+      <ThemeProvider defaultTheme="light">
         <Router>
           <Routes>
             {/* Public Routes */}
