@@ -19,8 +19,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin:"https://lms-student-n32p.vercel.app",
-    credentials:true
+    origin: "https://lms-student-9qih.vercel.app",
+    credentials: true
 }));
  
 // apis
